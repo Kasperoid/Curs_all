@@ -800,11 +800,15 @@ void create_new_file() {
 }
 void file_perebor(int size, char* file_name) {
 	Student student;
+	if (Error_zero(file_name) == -1) {
+		printf("В %s нет подходящих данных\n", file_name);
+		return;
+	}
 	FILE* file;
 	FILE* file_buf;
 	int i = 0;
-	char** buf_stud = new char* [size]; //Массив для зачёток
-	double* buf_srznach = new double[size]; //Массив для среднего значения оценок всех
+	char** buf_stud = new char* [size];
+	double* buf_srznach = new double[size];
 	fopen_s(&file, file_name, "r+b");
 	while (1) {
 		int srznach_count = 0, srznach_sum = 0;
@@ -854,6 +858,9 @@ void file_perebor(int size, char* file_name) {
 	delete[] buf_stud;
 	delete[] buf_srznach;
 	copy_file(file_name);
+	fopen_s(&file, file_name, "r+b");
+	print_file(file);
+	fclose(file);
 }
 void solve_ex() {
 	int size = 0, year, size_1 = 0, size_2 = 0;
@@ -904,14 +911,7 @@ void solve_ex() {
 	fclose(file_2);
 	file_perebor(size_1, file_name_pod);
 	file_perebor(size_2, file_name_ost);
-	fopen_s(&file_1, file_name_pod, "r+b");
-	fopen_s(&file_2, file_name_ost, "r+b");
-	print_file(file_1);
-	printf("==============\n");
-	print_file(file_2);
-	fclose(file_1);
-	fclose(file_2);
-} // Довести до ума
+} 
 void load_file() {
 	char file_name[STRLEN];
 	int vibor;
