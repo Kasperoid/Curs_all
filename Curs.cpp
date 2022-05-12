@@ -13,8 +13,8 @@ const char* main_menu[] = {
 	"2 - Генерация нового файла",
 	"3 - Загрузка существующего файла",
 	"4 - Печать файла",
-	"5 - Выйти из программы",
-	"6 - Реализация варианта"
+	"5 - Реализация варианта",
+	"6 - Выйти из программы"
 };
 const char* sub_menu[] = {
 	"1 - Печать файла",
@@ -202,86 +202,24 @@ int Error_mark(int mark) {
 	return flag;
 }
 
-// Вывод 
-void print_zapis(Student* student) {
-	printf("ФИО: %s %s %s Пол: %c\n", (*student).F, (*student).N, (*student).O, (*student).sex);
-	printf("Инст: %s Каф: %s\n", (*student).inst, (*student).cafedra);
-	printf("Группа: %s Студак: %s\n", (*student).group, (*student).zachetka);
-	printf("Дата рождения: %02d.%02d.%d\n", (*student).bdyear.d, (*student).bdyear.m, (*student).bdyear.y);
-	printf("Дата поступления: %d\n", (*student).gryear.y);
-	for (int i = 0; i < (*student).Snum; ++i) {
-		printf("Cеместр %d :\n", (*student).S[i].count);
-		for (int j = 0; j < (*student).S[i].Pnum; ++j) {
-			printf("Предмет >> Оценка: %s >> %d\n", (*student).S[i].p[j].Name, (*student).S[i].p[j].mark);
-		}
-	}
-}
-void print_file() { // Для главного меню
-	char file_name[STRLEN];
-	Student student;
-	FILE* file;
-	printf("%s", nazvanie_faila[0]);
-	scanf_s("%s", file_name, STRLEN - 1);
-	if (Error_exist(file_name) == -1) { printf("%s", Error[5]); return; }
-	if (Error_zero(file_name) == -1) { printf("%s", Error[6]); return; }
-	fopen_s(&file, file_name, "rb");
-	while (1) {
-		fread_s(&student, sizeof(student), sizeof(student), 1, file);
-		if (feof(file)) break;
-		printf("ФИО: %s %s %s Пол: %c\n", student.F, student.N, student.O, student.sex);
-		printf("Инст: %s Каф: %s\n", student.inst, student.cafedra);
-		printf("Группа: %s Студак: %s\n", student.group, student.zachetka);
-		printf("Дата рождения: %02d.%02d.%d\n", student.bdyear.d, student.bdyear.m, student.bdyear.y);
-		printf("Дата поступления: %d\n", student.gryear.y);
-		for (int i = 0; i < student.Snum; ++i) {
-			printf("Cеместр %d :\n", student.S[i].count);
-			for (int j = 0; j < student.S[i].Pnum; ++j) {
-				printf("Предмет >> Оценка: %s >> %d\n", student.S[i].p[j].Name, student.S[i].p[j].mark);
-			}
-		}
-	}
-	fclose(file);
-}
-void print_file(FILE* file) { // Файл мы уже открыли, он просто для вывода этого файла
-	Student student;
-	fseek(file, 0, SEEK_SET);
-	while (1) {
-		fread_s(&student, sizeof(student), sizeof(student), 1, file);
-		if (feof(file)) break;
-		print_zapis(&student);
-	}
-}
-void print_main_menu() {
-	for (int i = 0; i < 6; ++i) {
-		printf("%s\n", main_menu[i]);
-	}
-}
-void print_sub_menu() {
-	for (int i = 0; i < 7; ++i) {
-		printf("%s\n", sub_menu[i]);
-	}
-}
-void print_sub_menu2() {
-	for (int i = 0; i < 12; ++i) {
-		printf("%s\n", sub_menu2[i]);
-	}
-}
-
 // Очистка буфера
 void clear_buf() { // ????
 	while (cin.get() != '\n');
-} 
+}
 
 // Ввод данных
 void input_text(char* dest, int str_len) {
+	printf("\nВвод >> ");
 	scanf_s("%s", dest, str_len);
 	clear_buf();
 }
 void input_decimal(int* dest) {
+	printf("\nВвод >> ");
 	scanf_s("%d", dest);
 	clear_buf();
 }
 void input_char(char* dest) {
+	printf("\nВвод >> ");
 	scanf_s("%c", dest);
 	clear_buf();
 }
@@ -289,7 +227,7 @@ void input_zapis(Student* student, FILE* file) {
 	int vibor;
 
 	// Фамилия
-	name1:
+name1:
 	printf("%s ", polja_students[0]);
 	input_text((*student).F, STRLEN - 1);
 	if (Error_name((*student).F) == 0) {
@@ -298,7 +236,7 @@ void input_zapis(Student* student, FILE* file) {
 	}
 
 	// Имя
-	name2:
+name2:
 	printf("%s ", polja_students[1]);
 	input_text((*student).N, STRLEN - 1);
 	if (Error_name((*student).N) == 0) {
@@ -307,7 +245,7 @@ void input_zapis(Student* student, FILE* file) {
 	}
 
 	// Отчество
-	name3:
+name3:
 	printf("%s ", polja_students[2]);
 	input_text((*student).O, STRLEN - 1);
 	if (Error_name((*student).O) == 0) {
@@ -324,9 +262,9 @@ data2:
 	printf("Месяц: ");
 	input_decimal(&(*student).bdyear.m);
 
-	if (Error_data_month((*student).bdyear.m) == 1) { 
-		printf("%s", Error[1]); 
-		goto data2; 
+	if (Error_data_month((*student).bdyear.m) == 1) {
+		printf("%s", Error[1]);
+		goto data2;
 	}
 
 	printf("Год: ");
@@ -338,12 +276,12 @@ data2:
 	}
 
 	// Год поступления
-	data3: 
+data3:
 	printf("%s", polja_students[4]);
 	input_decimal(&(*student).gryear.y);
 	if (((*student).gryear.y - (*student).bdyear.y) < 17) {
 		printf("%s", Error[0]);
-		data4:
+	data4:
 		printf("0 - Изменить дату рождения\n1 - Изменить год поступления\n");
 		input_decimal(&vibor);
 		switch (vibor) {
@@ -366,7 +304,7 @@ data2:
 	input_text((*student).group, STRLEN - 1);
 
 	// Зачетка 
-	stud1:
+stud1:
 	printf("%s", polja_students[8]);
 	input_text((*student).zachetka, STRLEN - 1);
 	if (Error_zachetka(file, (*student).zachetka) == 1) {
@@ -375,7 +313,7 @@ data2:
 	}
 
 	// Пол
-	sex1:
+sex1:
 	printf("%s", polja_students[9]);
 	input_char(&(*student).sex);
 	if (Error_sex((*student).sex) == 1) {
@@ -384,26 +322,26 @@ data2:
 	}
 
 	// Семестры
-	sem1:
+sem1:
 	printf("Введите кол-во семестров: ");
 	input_decimal(&(*student).Snum);
-	if (Error_semestr_num((*student).Snum) == 1) { 
-		printf("%s", Error[8]); 
-		goto sem1; 
+	if (Error_semestr_num((*student).Snum) == 1) {
+		printf("%s", Error[8]);
+		goto sem1;
 	}
 	for (int i = 0; i < (*student).Snum; ++i) {
 		(*student).S[i].count = i + 1;
 		// Предметы 
 		printf("Ввод %d семестра\n", i + 1);
-		sem2:
+	sem2:
 		printf("%s: ", polja_semestr[0]);
 		input_decimal(&(*student).S[i].Pnum);
-		if (Error_pred_num((*student).S[i].Pnum) == 1) { 
-			printf("%s", Error[9]); 
-			goto sem2; 
+		if (Error_pred_num((*student).S[i].Pnum) == 1) {
+			printf("%s", Error[9]);
+			goto sem2;
 		}
 		for (int j = 0; j < (*student).S[i].Pnum; j++) {
-			sem3:
+		sem3:
 			printf("%s ", polja_predmet[0]);
 			input_text((*student).S[i].p[j].Name, STRLEN - 1);
 			if (Error_repeat_pred(&student->S[i], j) == 1) {
@@ -414,10 +352,69 @@ data2:
 			printf("%s: ", polja_predmet[1]);
 			input_decimal(&(*student).S[i].p[j].mark);
 			if (Error_mark((*student).S[i].p[j].mark)) {
-				printf("%s", Error[4]); 
-				goto sem4; 
+				printf("%s", Error[4]);
+				goto sem4;
 			}
 		}
+	}
+}
+
+// Вывод 
+void print_zapis(Student* student) {
+	printf("\n");
+	printf("ФИО: %s %s %s Пол: %c\n", (*student).F, (*student).N, (*student).O, (*student).sex);
+	printf("Инст: %s Каф: %s\n", (*student).inst, (*student).cafedra);
+	printf("Группа: %s Студак: %s\n", (*student).group, (*student).zachetka);
+	printf("Дата рождения: %02d.%02d.%d\n", (*student).bdyear.d, (*student).bdyear.m, (*student).bdyear.y);
+	printf("Дата поступления: %d\n", (*student).gryear.y);
+	for (int i = 0; i < (*student).Snum; ++i) {
+		printf("Cеместр %d :\n", (*student).S[i].count);
+		for (int j = 0; j < (*student).S[i].Pnum; ++j) {
+			printf("Предмет >> Оценка: %s >> %d\n", (*student).S[i].p[j].Name, (*student).S[i].p[j].mark);
+		}
+	}
+}
+void print_file() { // Для главного меню
+	char file_name[STRLEN];
+	Student student;
+	FILE* file;
+	printf("%s", nazvanie_faila[0]);
+	input_text(file_name, STRLEN);
+	if (Error_exist(file_name) == -1) { printf("%s", Error[5]); return; }
+	if (Error_zero(file_name) == -1) { printf("%s", Error[6]); return; }
+	fopen_s(&file, file_name, "rb");
+	while (1) {
+		fread_s(&student, sizeof(student), sizeof(student), 1, file);
+		if (feof(file)) break;
+		print_zapis(&student);
+	}
+	fclose(file);
+}
+void print_file(FILE* file) { // Файл мы уже открыли, он просто для вывода этого файла
+	Student student;
+	fseek(file, 0, SEEK_SET);
+	while (1) {
+		fread_s(&student, sizeof(student), sizeof(student), 1, file);
+		if (feof(file)) break;
+		print_zapis(&student);
+	}
+}
+void print_main_menu() {
+	printf("\n");
+	for (int i = 0; i < 6; ++i) {
+		printf("%s\n", main_menu[i]);
+	}
+}
+void print_sub_menu() {
+	printf("\n");
+	for (int i = 0; i < 7; ++i) {
+		printf("%s\n", sub_menu[i]);
+	}
+}
+void print_sub_menu2() {
+	for (int i = 0; i < 12; ++i) {
+		printf("\n");
+		printf("%s\n", sub_menu2[i]);
 	}
 }
 
@@ -482,7 +479,7 @@ void copy_file(char* file_name) {
 }
 void change_zapis(FILE* file) {
 c:
-	printf("Введите ID студенческого билета: ");
+	printf("Введите ID студенческого билета");
 	char studak[STRLEN];
 	char s[STRLEN];
 	input_text(studak, STRLEN);
@@ -729,13 +726,12 @@ void generate_string(char* out, char* A, char* a) {
 	strcpy_s(out, STRLEN, word);
 }
 void generate_file() {
-	int num, strl, i, j, letter;
+	int num, i, j, letter;
 	char file_name[STRLEN];
 
 	char a[] = "qwertyuiopasdfghjklzxcvbnm";
 	char A[] = "QWERTYUIOPASDFGHJKLZXCVBNM";
 	char sex[] = "MW";
-	char word[STRLEN];
 
 	printf("Введите кол-во записей: ");
 	scanf_s("%d", &num);
@@ -802,6 +798,7 @@ void file_perebor(int size, char* file_name) {
 	Student student;
 	if (Error_zero(file_name) == -1) {
 		printf("В %s нет подходящих данных\n", file_name);
+		printf("==========\n");
 		return;
 	}
 	FILE* file;
@@ -860,6 +857,7 @@ void file_perebor(int size, char* file_name) {
 	copy_file(file_name);
 	fopen_s(&file, file_name, "r+b");
 	print_file(file);
+	printf("======================\n");
 	fclose(file);
 }
 void solve_ex() {
@@ -882,7 +880,6 @@ void solve_ex() {
 		return; 
 	}
 	a1:
-	printf("Введите:");
 	printf("%s", polja_students[9]);
 	input_char(&sex);
 	if (Error_sex(sex) == 1) {
@@ -981,10 +978,10 @@ a1:
 		print_file();
 		break;
 	case 5:
-		return 0;
-	case 6: 
 		solve_ex();
 		break;
+	case 6: 
+		return 0;
 	default:
 		break;
 	}
