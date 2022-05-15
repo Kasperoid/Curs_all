@@ -21,9 +21,7 @@ const char* sub_menu[] = {
 	"2 - Добавление записи",
 	"3 - Изменение записи",
 	"4 - Удаление записи",
-	"5 - Зашифровать",
-	"6 - Расшифровать",
-	"7 - Вернуться в главное меню"
+	"5 - Вернуться в главное меню"
 };
 const char* sub_menu2[] = {
 	"1 - Фамилия ",
@@ -407,7 +405,7 @@ void print_main_menu() {
 }
 void print_sub_menu() {
 	printf("\n");
-	for (int i = 0; i < 7; ++i) {
+	for (int i = 0; i < 5; ++i) {
 		printf("%s\n", sub_menu[i]);
 	}
 }
@@ -794,121 +792,7 @@ void create_new_file() {
 	}
 	fclose(file);
 }
-void file_perebor(int size, char* file_name) {
-	Student student;
-	if (Error_zero(file_name) == -1) {
-		printf("В %s нет подходящих данных\n", file_name);
-		printf("==========\n");
-		return;
-	}
-	FILE* file;
-	FILE* file_buf;
-	int i = 0;
-	char** buf_stud = new char* [size];
-	double* buf_srznach = new double[size];
-	fopen_s(&file, file_name, "r+b");
-	while (1) {
-		int srznach_count = 0, srznach_sum = 0;
-		fread_s(&student, sizeof(student), sizeof(student), 1, file);
-		if (feof(file)) break;
-		buf_stud[i] = new char[20];
-		strcpy_s(buf_stud[i], 20, student.zachetka);
-		for (int j = 0; j < student.Snum; j++) {
-			for (int k = 0; k < student.S[j].Pnum; k++) {
-				srznach_sum += student.S[j].p[k].mark;
-			}
-			srznach_count += student.S[j].Pnum;
-		}
-		buf_srznach[i] = (double) srznach_sum / srznach_count;
-		i++;
-	}
-	double temp_num;
-	char temp_zach[20];
-	for (int j = 1; j < size; ++j) {
-		for (int k = 0; k < size - j; k++) {
-			if (buf_srznach[k] < buf_srznach[k + 1]) {
-				temp_num = buf_srznach[j];
-				buf_srznach[j] = buf_srznach[j + 1];
-				buf_srznach[j + 1] = temp_num;
-				strcpy_s(temp_zach, 20 ,buf_stud[j]);
-				strcpy_s(buf_stud[j], 20 ,buf_stud[j + 1]);
-				strcpy_s(buf_stud[j + 1], 20 ,temp_zach);
-			}
-		}
-	}
-	i = 0;
-	fseek(file, 0, SEEK_SET);
-	fopen_s(&file_buf, "Izm.txt", "w+b");
-	while (1) {
-		fread_s(&student, sizeof(student), sizeof(student), 1, file);
-		if (strcmp(student.zachetka, buf_stud[i]) == 0) {
-			fwrite(&student, sizeof(student), 1, file_buf);
-			fseek(file, 0, SEEK_SET);
-			i++;
-		}
-		if (i == size) {
-			break;
-		}
-	}
-	fclose(file);
-	fclose(file_buf);
-	delete[] buf_stud;
-	delete[] buf_srznach;
-	copy_file(file_name);
-	fopen_s(&file, file_name, "r+b");
-	print_file(file);
-	printf("======================\n");
-	fclose(file);
-}
-void solve_ex() {
-	int size = 0, year, size_1 = 0, size_2 = 0;
-	char file_name[STRLEN], sex, file_name_pod[STRLEN], file_name_ost[STRLEN];
-	FILE* file;
-	FILE* file_1;
-	FILE* file_2;
-	Student student;
-	strcpy_s(file_name_pod, 20 ,"Student_Pod.txt");
-	strcpy_s(file_name_ost, 20 ,"Student_Ost.txt");
-	printf("%s", nazvanie_faila[0]);
-	input_text(file_name, STRLEN - 1);
-	if (Error_exist(file_name) == -1) { 
-		printf("%s", Error[5]); 
-		return; 
-	}
-	if (Error_zero(file_name) == -1) { 
-		printf("%s", Error[6]); 
-		return; 
-	}
-	a1:
-	printf("%s", polja_students[9]);
-	input_char(&sex);
-	if (Error_sex(sex) == 1) {
-		printf("%s", Error[11]);
-		goto a1;
-	}
-	printf("%s", polja_students[4]);
-	input_decimal(&year);
-	fopen_s(&file, file_name, "r+b");
-	fopen_s(&file_1, file_name_pod, "w+b");
-	fopen_s(&file_2, file_name_ost, "w+b");
-	while (1) {
-		fread_s(&student, sizeof(student), sizeof(student), 1, file);
-		if (feof(file)) break;
-		if (student.sex == sex && student.gryear.y == year) {
-			fwrite(&student, sizeof(student), 1, file_1);
-			size_1++;
-		}
-		else {
-			fwrite(&student, sizeof(student), 1, file_2);
-			size_2++;
-		}
-	}
-	fclose(file);
-	fclose(file_1);
-	fclose(file_2);
-	file_perebor(size_1, file_name_pod);
-	file_perebor(size_2, file_name_ost);
-} 
+
 void load_file() {
 	char file_name[STRLEN];
 	int vibor;
@@ -943,12 +827,6 @@ a2:
 		fopen_s(&file, file_name, "r+b");
 		goto a2;
 	case 5:
-		/*encrypt();*/
-		break;
-	case 6:
-		/*decrypt();*/
-		goto a2;
-	case 7:
 		goto a3;
 	default:
 		goto a2;
@@ -978,7 +856,7 @@ a1:
 		print_file();
 		break;
 	case 5:
-		solve_ex();
+		
 		break;
 	case 6: 
 		return 0;
