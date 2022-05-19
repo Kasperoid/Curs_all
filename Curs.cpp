@@ -98,7 +98,7 @@ struct Student {
 	int Snum;
 };
 
-class Check{
+class Check {
 private:
 	int flag;
 	FILE* file;
@@ -243,7 +243,7 @@ public:
 	}
 	void input(int* dest) {
 		*dest = 1234;
-		a1:
+	a1:
 		printf("\nВвод >> ");
 		scanf_s("%d", dest);
 		clear_buf();
@@ -443,7 +443,7 @@ public:
 		cout << "|" << setfill('-') << setw(35) << "|" << endl;
 	}
 };
-class File : public Print, public Input{
+class File : public Print, public Input {
 private:
 	Student student;
 	FILE* file_izm;
@@ -613,7 +613,7 @@ public:
 		printf("Файл успешно расшифрован!\n");
 	}
 };
-class Anketa : public File{
+class Anketa : public File {
 private:
 	Student student;
 	FILE* file_izm;
@@ -871,138 +871,11 @@ public:
 		}
 		printf("\nЗапись успешно удалена!\n");
 	}
-	void file_perebor(int size, char* file_name) {
-		if (Error_zero(file_name) == -1) {
-			printf("В %s нет подходящих данных\n", file_name);
-			printf("==========\n");
-			return;
-		}
-		FILE* file;
-		FILE* file_buf;
-		int i = 0;
-		char** buf_stud = new char* [size];
-		double* buf_srznach = new double[size];
-		fopen_s(&file, file_name, "r+b");
-		while (1) {
-			int srznach_count = 0, srznach_sum = 0;
-			fread_s(&student, sizeof(student), sizeof(student), 1, file);
-			if (feof(file)) break;
-			buf_stud[i] = new char[20];
-			strcpy_s(buf_stud[i], 20, student.zachetka);
-			for (int j = 0; j < student.Snum; j++) {
-				for (int k = 0; k < student.S[j].Pnum; k++) {
-					srznach_sum += student.S[j].p[k].mark;
-				}
-				srznach_count += student.S[j].Pnum;
-			}
-			buf_srznach[i] = (double)srznach_sum / srznach_count;
-			i++;
-		}
-		double temp_num;
-		char temp_zach[20];
-		for (int j = 0; j < size; j++) {
-			for (int k = 0; k < size - 1; k++) {
-				if (buf_srznach[k] < buf_srznach[k + 1]) {
-					temp_num = buf_srznach[k];
-					buf_srznach[k] = buf_srznach[k + 1];
-					buf_srznach[k + 1] = temp_num;
-					strcpy_s(temp_zach, 20, buf_stud[k]);
-					strcpy_s(buf_stud[k], 20, buf_stud[k + 1]);
-					strcpy_s(buf_stud[k + 1], 20, temp_zach);
-				}
-			}
-		}
-		i = 0;
-		fseek(file, 0, SEEK_SET);
-		fopen_s(&file_buf, "Izm.txt", "w+b");
-		while (1) {
-			fread_s(&student, sizeof(student), sizeof(student), 1, file);
-			if (strcmp(student.zachetka, buf_stud[i]) == 0) {
-				fwrite(&student, sizeof(student), 1, file_buf);
-				fseek(file, 0, SEEK_SET);
-				i++;
-			}
-			if (i == size) {
-				break;
-			}
-		}
-		fclose(file);
-		fclose(file_buf);
-		delete[] buf_stud;
-		delete[] buf_srznach;
-		remove(file_name);
-		rename("Izm.txt", file_name);
-		fopen_s(&file, file_name, "r+b");
-		print_file(file);
-		fclose(file);
-	}
 	void solve_ex() {
-		int size = 0, year, size_1 = 0, size_2 = 0;
-		char sex, file_name_pod[STRLEN] = "Student_Pod.txt", file_name_ost[STRLEN] = "Student_Ost.txt";
-		FILE* file;
-		FILE* file_1;
-		FILE* file_2;
-		Student student;
-	f1:
-		printf("%s", nazvanie_faila[0]);
-		input(file_name, STRLEN - 1);
-		if (Error_exist(file_name) == -1) {
-			printf("%s", Error[5]);
-			printf("0 - Исправить название файла\n 1 - Выйти в главное меню");
-			input(&vibor);
-			switch (vibor) {
-			case 0:
-				goto f1;
-			case 1:
-				return;
-			}
-		}
-		if (Error_zero(file_name) == -1) {
-			printf("%s", Error[6]);
-			printf("0 - Исправить название файла\n 1 - Выйти в главное меню");
-			input(&vibor);
-			switch (vibor) {
-			case 0:
-				goto f1;
-			case 1:
-				return;
-			}
-		}
-	a1:
-		printf("%s", polja_students[9]);
-		input(&sex);
-		if (Error_sex(sex) == 1) {
-			printf("%s", Error[11]);
-			goto a1;
-		}
-		printf("%s", polja_students[4]);
-		input(&year);
-		fopen_s(&file, file_name, "r+b");
-		fopen_s(&file_1, file_name_pod, "w+b");
-		fopen_s(&file_2, file_name_ost, "w+b");
-		while (1) {
-			fread_s(&student, sizeof(student), sizeof(student), 1, file);
-			if (feof(file)) break;
-			if (student.sex == sex && student.gryear.y == year) {
-				fwrite(&student, sizeof(student), 1, file_1);
-				size_1++;
-			}
-			else {
-				fwrite(&student, sizeof(student), 1, file_2);
-				size_2++;
-			}
-		}
-		fclose(file);
-		fclose(file_1);
-		fclose(file_2);
-		printf("\nВывод подходящих анкет!\n");
-		file_perebor(size_1, file_name_pod);
-		printf("\nВывод остальных анкет!\n");
-		file_perebor(size_2, file_name_ost);
 	}
 };
-class menu : public File{
-private: 
+class menu : public File {
+private:
 	Anketa ank;
 	FILE* file;
 	int vibor;
