@@ -4,9 +4,6 @@
 #include <Windows.h>
 #include <io.h>
 #include <regex>
-#include <wincrypt.h>
-
-#define STRLEN 20
 
 using namespace std;
 
@@ -15,7 +12,7 @@ const char* main_menu[] = {
 	"2 - Генерация нового файла",
 	"3 - Загрузка существующего файла",
 	"4 - Печать файла",
-	"5 - Реализация варианта",
+	"5 - Реализация 50 варианта",
 	"6 - Выйти из программы"
 };
 const char* sub_menu[] = {
@@ -23,9 +20,7 @@ const char* sub_menu[] = {
 	"2 - Добавление записи",
 	"3 - Изменение записи",
 	"4 - Удаление записи",
-	"5 - Зашифровать",
-	"6 - Расшифровать",
-	"7 - Вернуться в главное меню"
+	"5 - Вернуться в главное меню"
 };
 const char* sub_menu2[] = {
 	"1 - Фамилия ",
@@ -84,21 +79,21 @@ struct Date {
 struct Predmet { int mark; char Name[20]; };
 struct Semestr { Predmet p[10]; int Pnum; int count; };
 struct Student {
-	char F[STRLEN];
-	char N[STRLEN];
-	char O[STRLEN];
+	char F[20];
+	char N[20];
+	char O[20];
 	Date bdyear;
 	Date gryear;
-	char inst[STRLEN];
-	char cafedra[STRLEN];
-	char group[STRLEN];
-	char zachetka[STRLEN];
+	char inst[20];
+	char cafedra[20];
+	char group[20];
+	char zachetka[20];
 	char sex;
 	Semestr S[10];
 	int Snum;
 };
 
-class Check {
+class Check{
 private:
 	int flag;
 	FILE* file;
@@ -209,7 +204,7 @@ private:
 public:
 	void predmet_null(Predmet* p) {
 		p->mark = 0;
-		memset(p->Name, '\0', STRLEN);
+		memset(p->Name, '\0', 20);
 	}
 	void semestr_null(Semestr* s) {
 		for (int i = 0; i < 10; ++i) {
@@ -219,13 +214,13 @@ public:
 		s->count = 0;
 	}
 	void student_null(Student* s) {
-		memset(s->F, '\0', STRLEN);
-		memset(s->N, '\0', STRLEN);
-		memset(s->O, '\0', STRLEN);
-		memset(s->inst, '\0', STRLEN);
-		memset(s->cafedra, '\0', STRLEN);
-		memset(s->group, '\0', STRLEN);
-		memset(s->zachetka, '\0', STRLEN);
+		memset(s->F, '\0', 20);
+		memset(s->N, '\0', 20);
+		memset(s->O, '\0', 20);
+		memset(s->inst, '\0', 20);
+		memset(s->cafedra, '\0', 20);
+		memset(s->group, '\0', 20);
+		memset(s->zachetka, '\0', 20);
 		s->sex = '\0';
 		for (int i = 0; i < 9; ++i) {
 			semestr_null(&s->S[i]);
@@ -243,7 +238,7 @@ public:
 	}
 	void input(int* dest) {
 		*dest = 1234;
-	a1:
+		a1:
 		printf("\nВвод >> ");
 		scanf_s("%d", dest);
 		clear_buf();
@@ -263,7 +258,7 @@ public:
 		student_null(student);
 	name1:
 		printf("%s ", polja_students[0]);
-		input((*student).F, STRLEN - 1);
+		input((*student).F, 20 - 1);
 		if (Error_name((*student).F) == 0) {
 			printf("%s", Error[10]);
 			goto name1;
@@ -272,7 +267,7 @@ public:
 
 	name2:
 		printf("%s ", polja_students[1]);
-		input((*student).N, STRLEN - 1);
+		input((*student).N, 20 - 1);
 		if (Error_name((*student).N) == 0) {
 			printf("%s", Error[10]);
 			goto name2;
@@ -281,7 +276,7 @@ public:
 
 	name3:
 		printf("%s ", polja_students[2]);
-		input((*student).O, STRLEN - 1);
+		input((*student).O, 20 - 1);
 		if (Error_name((*student).O) == 0) {
 			printf("%s", Error[10]);
 			goto name3;
@@ -325,20 +320,20 @@ public:
 
 
 		printf("%s", polja_students[5]);
-		input((*student).inst, STRLEN - 1);
+		input((*student).inst, 20 - 1);
 
 
 		printf("%s", polja_students[6]);
-		input((*student).cafedra, STRLEN - 1);
+		input((*student).cafedra, 20 - 1);
 
 
 		printf("%s", polja_students[7]);
-		input((*student).group, STRLEN - 1);
+		input((*student).group, 20 - 1);
 
 
 	stud1:
 		printf("%s", polja_students[8]);
-		input((*student).zachetka, STRLEN - 1);
+		input((*student).zachetka, 20 - 1);
 		if (Error_zachetka(file, (*student).zachetka) == 1) {
 			printf("%s", Error[7]);
 			goto stud1;
@@ -374,7 +369,7 @@ public:
 			for (int j = 0; j < (*student).S[i].Pnum; j++) {
 			sem3:
 				printf("%s ", polja_predmet[0]);
-				input((*student).S[i].p[j].Name, STRLEN - 1);
+				input((*student).S[i].p[j].Name, 20 - 1);
 				if (Error_repeat_pred(&student->S[i], j) == 1) {
 					printf("%s", Error[3]);
 					goto sem3;
@@ -395,6 +390,9 @@ public:
 	void print_zapis(Student* student) {
 		printf("\n");
 		int size = strlen((*student).F) + strlen((*student).N) + strlen((*student).O) + 20;
+		if (size < 50) {
+			size = 50;
+		}
 		cout << "|" << setfill('-') << setw(size) << "|" << endl;
 		cout << "| ФИО: " << (*student).F << " " << (*student).N << " " << (*student).O << " |" << " Пол: " << (*student).sex << setfill(' ') << setw(size - 17 - strlen((*student).F) - strlen((*student).N) - strlen((*student).O)) << "|" << endl;
 		cout << "|" << setfill('-') << setw(size) << "|" << endl;
@@ -428,7 +426,7 @@ public:
 		cout << "|" << setfill('-') << setw(35) << "|" << endl;
 		cout << "|" << setfill(' ') << setw(21) << "МЕНЮ ФАЙЛА" << setw(14) << "|" << endl;
 		cout << "|" << setfill('-') << setw(35) << "|" << endl;
-		for (int i = 0; i < 7; ++i) {
+		for (int i = 0; i < 5; ++i) {
 			cout << "| " << sub_menu[i] << setfill(' ') << setw(34 - strlen(sub_menu[i])) << "|" << endl;
 		}
 		cout << "|" << setfill('-') << setw(35) << "|" << endl;
@@ -443,18 +441,17 @@ public:
 		cout << "|" << setfill('-') << setw(35) << "|" << endl;
 	}
 };
-class File : public Print, public Input {
+class File : public Print, public Input{
 private:
 	Student student;
 	FILE* file_izm;
 	FILE* file;
-	char file_name[STRLEN];
+	char file_name[20];
 	int vibor;
-	DWORD count;
 public:
 	void create_new_file() {
 		printf("Введите название файла");
-		input(file_name, STRLEN - 1);
+		input(file_name, 20 - 1);
 		fopen_s(&file, file_name, "w+b");
 		for (int count = 0; ; count++) {
 			printf("Введите информацию о %d студенте:\n", count + 1);
@@ -469,22 +466,22 @@ public:
 		fclose(file);
 	}
 	void generate_string(char* out, char* A, char* a) {
-		char word[STRLEN];
+		char word[20];
 		int j;
 		int letter, strl;
-		for (j = 0; j < STRLEN; ++j) {
+		for (j = 0; j < 20; ++j) {
 			word[j] = '\0';
 		}
 		letter = rand() % 26;
 
 		word[0] = A[letter];
-		strl = rand() % (STRLEN - 1) + 1;
+		strl = rand() % (20 - 1) + 1;
 		for (j = 1; j < strl; ++j) {
 			letter = rand() % 26;
 			word[j] = a[letter];
 		}
 
-		strcpy_s(out, STRLEN, word);
+		strcpy_s(out, 20, word);
 	}
 	void generate_file() {
 		int num, i, j, letter;
@@ -494,7 +491,7 @@ public:
 		char sex[] = "MW";
 
 		printf("%s", nazvanie_faila[0]);
-		input(file_name, STRLEN - 1);
+		input(file_name, 20 - 1);
 		fopen_s(&file, file_name, "wb");
 
 		printf("Введите кол-во записей: ");
@@ -533,7 +530,7 @@ public:
 	}
 	void print_file() {
 		printf("%s", nazvanie_faila[0]);
-		input(file_name, STRLEN);
+		input(file_name, 20);
 		if (Error_exist(file_name) == -1) { printf("%s", Error[5]); return; }
 		if (Error_zero(file_name) == -1) { printf("%s", Error[6]); return; }
 		fopen_s(&file, file_name, "rb");
@@ -552,74 +549,14 @@ public:
 			print_zapis(&student);
 		}
 	}
-	void crypt_str(char* str, HCRYPTKEY hSessionKey) {
-		count = strlen(str);
-		CryptEncrypt(hSessionKey, 0, true, 0, (BYTE*)str, &count, strlen(str));
-	}
-	void crypt_file(FILE* file, char* file_name, HCRYPTKEY hSessionKey) {
-		fseek(file, 0, SEEK_SET);
-		fopen_s(&file_izm, "Izm.txt", "w+b");
-		while (1) {
-			fread_s(&student, sizeof(student), sizeof(student), 1, file);
-			if (feof(file)) break;
-			crypt_str(student.F, hSessionKey);
-			crypt_str(student.N, hSessionKey);
-			crypt_str(student.O, hSessionKey);
-			crypt_str(student.inst, hSessionKey);
-			crypt_str(student.cafedra, hSessionKey);
-			crypt_str(student.group, hSessionKey);
-			crypt_str(student.zachetka, hSessionKey);
-			for (int i = 0; i < student.Snum; i++) {
-				for (int j = 0; j < student.S[i].Pnum; j++) {
-					crypt_str(student.S[i].p[j].Name, hSessionKey);
-				}
-			}
-			fwrite(&student, sizeof(student), 1, file_izm);
-		}
-		fclose(file);
-		fclose(file_izm);
-		remove(file_name);
-		rename("Izm.txt", file_name);
-		printf("Файл успешно зашифрован!\n");
-	}
-	void decrypt_str(char* str, HCRYPTKEY hSessionKey) {
-		count = strlen(str);
-		CryptDecrypt(hSessionKey, 0, true, 0, (BYTE*)str, &count);
-	}
-	void decrypt_file(FILE* file, char* file_name, HCRYPTKEY hSessionKey) {
-		fseek(file, 0, SEEK_SET);
-		fopen_s(&file_izm, "Izm.txt", "w+b");
-		while (1) {
-			fread_s(&student, sizeof(student), sizeof(student), 1, file);
-			if (feof(file)) break;
-			decrypt_str(student.F, hSessionKey);
-			decrypt_str(student.N, hSessionKey);
-			decrypt_str(student.O, hSessionKey);
-			decrypt_str(student.inst, hSessionKey);
-			decrypt_str(student.cafedra, hSessionKey);
-			decrypt_str(student.group, hSessionKey);
-			decrypt_str(student.zachetka, hSessionKey);
-			for (int i = 0; i < student.Snum; i++) {
-				for (int j = 0; j < student.S[i].Pnum; j++) {
-					decrypt_str(student.S[i].p[j].Name, hSessionKey);
-				}
-			}
-			fwrite(&student, sizeof(student), 1, file_izm);
-		}
-		fclose(file_izm);
-		fclose(file);
-		remove(file_name);
-		rename("Izm.txt", file_name);
-		printf("Файл успешно расшифрован!\n");
-	}
 };
-class Anketa : public File {
+class Anketa : public File{
 private:
 	Student student;
 	FILE* file_izm;
-	char studak[STRLEN];
-	char s[STRLEN];
-	char file_name[STRLEN];
+	char studak[20];
+	char s[20];
+	char file_name[20];
 	int vibor, size;
 public:
 	void add_zapis(FILE* file) {
@@ -650,7 +587,7 @@ public:
 	void change_zapis(FILE* file) {
 	c:
 		printf("Введите ID студенческого билета");
-		input(studak, STRLEN);
+		input(studak, 20);
 		find_zapis(file, studak);
 		if (feof(file)) {
 		c1:
@@ -679,7 +616,7 @@ public:
 			case 1:
 			name1:
 				printf("\nВведите новое значение: ");
-				input(s, STRLEN);
+				input(s, 20);
 				strcpy_s(student.F, sizeof(student.F), s);
 				if (Error_name(student.F) == 0) {
 					printf("%s", Error[10]);
@@ -689,7 +626,7 @@ public:
 			case 2:
 			name2:
 				printf("Введите новое значение: ");
-				input(s, STRLEN);
+				input(s, 20);
 				strcpy_s(student.N, sizeof(student.N), s);
 				if (Error_name(student.N) == 0) {
 					printf("%s", Error[10]);
@@ -699,7 +636,7 @@ public:
 			case 3:
 			name3:
 				printf("Введите новое значение: ");
-				input(s, STRLEN);
+				input(s, 20);
 				strcpy_s(student.O, sizeof(student.O), s);
 				if (Error_name(student.O) == 0) {
 					printf("%s", Error[10]);
@@ -740,23 +677,23 @@ public:
 				break;
 			case 6:
 				printf("Введите новое значение: ");
-				input(s, STRLEN);
+				input(s, 20);
 				strcpy_s(student.inst, sizeof(student.inst), s);
 				break;
 			case 7:
 				printf("Введите новое значение: ");
-				input(s, STRLEN);
+				input(s, 20);
 				strcpy_s(student.cafedra, sizeof(student.cafedra), s);
 				break;
 			case 8:
 				printf("Введите новое значение: ");
-				input(s, STRLEN);
+				input(s, 20);
 				strcpy_s(student.group, sizeof(student.group), s);
 				break;
 			case 9:
 			zach1:
 				printf("Введите новое значение: ");
-				input(s, STRLEN);
+				input(s, 20);
 				strcpy_s(student.zachetka, sizeof(student.zachetka), s);
 				if (Error_zachetka(file, student.zachetka) == 1) {
 					printf("%s", Error[7]);
@@ -795,7 +732,7 @@ public:
 					for (int j = 0; j < student.S[i].Pnum; j++) {
 					sem3:
 						printf("%s ", polja_predmet[0]);
-						input(student.S[i].p[j].Name, STRLEN - 1);
+						input(student.S[i].p[j].Name, 20 - 1);
 						if (Error_repeat_pred(student.S[i], j) == 1) {
 							printf("%s", Error[3]);
 							goto sem3;
@@ -837,7 +774,7 @@ public:
 	void delete_zapis(FILE* file, char* file_name) {
 	c:
 		printf("Введите ID студенческого билета: ");
-		input(studak, STRLEN);
+		input(studak, 20);
 		find_zapis(file, studak);
 		if (feof(file)) {
 		c1:
@@ -871,19 +808,143 @@ public:
 		}
 		printf("\nЗапись успешно удалена!\n");
 	}
+	void file_perebor(int size, char* file_name) {
+		if (Error_zero(file_name) == -1) {
+			printf("В %s нет подходящих данных\n", file_name);
+			printf("==========\n");
+			return;
+		}
+		FILE* file;
+		FILE* file_buf;
+		int i = 0;
+		char** buf_stud = new char* [size];
+		double* buf_srznach = new double[size];
+		fopen_s(&file, file_name, "r+b");
+		while (1) {
+			int srznach_count = 0, srznach_sum = 0;
+			fread_s(&student, sizeof(student), sizeof(student), 1, file);
+			if (feof(file)) break;
+			buf_stud[i] = new char[20];
+			strcpy_s(buf_stud[i], 20, student.zachetka);
+			for (int j = 0; j < student.Snum; j++) {
+				for (int k = 0; k < student.S[j].Pnum; k++) {
+					srznach_sum += student.S[j].p[k].mark;
+				}
+				srznach_count += student.S[j].Pnum;
+			}
+			buf_srznach[i] = (double)srznach_sum / srznach_count;
+			i++;
+		}
+		double temp_num;
+		char temp_zach[20];
+		for (int j = 0; j < size; j++) {
+			for (int k = 0; k < size - 1; k++) {
+				if (buf_srznach[k] < buf_srznach[k + 1]) {
+					temp_num = buf_srznach[k];
+					buf_srznach[k] = buf_srznach[k + 1];
+					buf_srznach[k + 1] = temp_num;
+					strcpy_s(temp_zach, 20, buf_stud[k]);
+					strcpy_s(buf_stud[k], 20, buf_stud[k + 1]);
+					strcpy_s(buf_stud[k + 1], 20, temp_zach);
+				}
+			}
+		}
+		i = 0;
+		fseek(file, 0, SEEK_SET);
+		fopen_s(&file_buf, "Izm.txt", "w+b");
+		while (1) {
+			fread_s(&student, sizeof(student), sizeof(student), 1, file);
+			if (strcmp(student.zachetka, buf_stud[i]) == 0) {
+				fwrite(&student, sizeof(student), 1, file_buf);
+				fseek(file, 0, SEEK_SET);
+				i++;
+			}
+			if (i == size) {
+				break;
+			}
+		}
+		fclose(file);
+		fclose(file_buf);
+		delete[] buf_stud;
+		delete[] buf_srznach;
+		remove(file_name);
+		rename("Izm.txt", file_name);
+		fopen_s(&file, file_name, "r+b");
+		print_file(file);
+		fclose(file);
+	}
 	void solve_ex() {
+		int size = 0, year, size_1 = 0, size_2 = 0;
+		char sex, file_name_pod[20] = "Student_Pod.txt", file_name_ost[20] = "Student_Ost.txt";
+		FILE* file;
+		FILE* file_1;
+		FILE* file_2;
+		Student student;
+	f1:
+		printf("%s", nazvanie_faila[0]);
+		input(file_name, 20 - 1);
+		if (Error_exist(file_name) == -1) {
+			printf("%s", Error[5]);
+			printf("0 - Исправить название файла\n 1 - Выйти в главное меню");
+			input(&vibor);
+			switch (vibor) {
+			case 0:
+				goto f1;
+			case 1:
+				return;
+			}
+		}
+		if (Error_zero(file_name) == -1) {
+			printf("%s", Error[6]);
+			printf("0 - Исправить название файла\n 1 - Выйти в главное меню");
+			input(&vibor);
+			switch (vibor) {
+			case 0:
+				goto f1;
+			case 1:
+				return;
+			}
+		}
+	a1:
+		printf("%s", polja_students[9]);
+		input(&sex);
+		if (Error_sex(sex) == 1) {
+			printf("%s", Error[11]);
+			goto a1;
+		}
+		printf("%s", polja_students[4]);
+		input(&year);
+		fopen_s(&file, file_name, "r+b");
+		fopen_s(&file_1, file_name_pod, "w+b");
+		fopen_s(&file_2, file_name_ost, "w+b");
+		while (1) {
+			fread_s(&student, sizeof(student), sizeof(student), 1, file);
+			if (feof(file)) break;
+			if (student.sex == sex && student.gryear.y == year) {
+				fwrite(&student, sizeof(student), 1, file_1);
+				size_1++;
+			}
+			else {
+				fwrite(&student, sizeof(student), 1, file_2);
+				size_2++;
+			}
+		}
+		fclose(file);
+		fclose(file_1);
+		fclose(file_2);
+		printf("\nВывод подходящих анкет!\n");
+		file_perebor(size_1, file_name_pod);
+		printf("\nВывод остальных анкет!\n");
+		file_perebor(size_2, file_name_ost);
+		printf(" Файл с подходящими студентами - Student_Pod.txt\n Файл с остальными студентами - Student_Ost.txt\n");
 	}
 };
-class menu : public File {
-private:
+class menu : public File{
+private: 
 	Anketa ank;
 	FILE* file;
 	int vibor;
-	char file_name[STRLEN];
-	DWORD dwLen;
-	HCRYPTKEY hKey;
-	HCRYPTPROV hProv;
-	HCRYPTHASH hHash;
+	char file_name[20];
 public:
 	void main_menu() {
 	a1:
@@ -915,9 +976,8 @@ public:
 		goto a1;
 	}
 	void sub_menu() {
-		char szPassword[] = "123456\0";
 		printf("%s", nazvanie_faila[0]);
-		input(file_name, STRLEN - 1);
+		input(file_name, 20 - 1);
 		if (Error_exist(file_name) == -1) {
 			printf("%s", Error[5]);
 			return;
@@ -927,11 +987,6 @@ public:
 			return;
 		}
 		fopen_s(&file, file_name, "r+b");
-		dwLen = (DWORD)strlen(szPassword);
-		CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT);
-		CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash);
-		CryptHashData(hHash, (BYTE*)szPassword, dwLen, 0);
-		CryptDeriveKey(hProv, CALG_RC4, hHash, CRYPT_EXPORTABLE, &hKey);
 	a2:
 		print_sub_menu();
 		input(&vibor);
@@ -951,14 +1006,6 @@ public:
 			fopen_s(&file, file_name, "r+b");
 			goto a2;
 		case 5:
-			crypt_file(file, file_name, hKey);
-			fopen_s(&file, file_name, "r+b");
-			goto a2;
-		case 6:
-			decrypt_file(file, file_name, hKey);
-			fopen_s(&file, file_name, "r+b");
-			goto a2;
-		case 7:
 			goto a3;
 		default:
 			goto a2;
