@@ -71,29 +71,31 @@ const char* Error[] = { "\nОшибка: дата рождения не соот
 					 "\nОшибка: некорректный формат пола\n"
 };
 
-struct Date {
-	int d;
-	int m;
-	int y;
+class Person {
+public:
+	struct Date {
+		int d;
+		int m;
+		int y;
+	};
+	struct Predmet { int mark; char Name[20]; };
+	struct Semestr { Predmet p[10]; int Pnum; int count; };
+	struct Student {
+		char F[20];
+		char N[20];
+		char O[20];
+		Date bdyear;
+		Date gryear;
+		char inst[20];
+		char cafedra[20];
+		char group[20];
+		char zachetka[20];
+		char sex;
+		Semestr S[10];
+		int Snum;
+	};
 };
-struct Predmet { int mark; char Name[20]; };
-struct Semestr { Predmet p[10]; int Pnum; int count; };
-struct Student {
-	char F[20];
-	char N[20];
-	char O[20];
-	Date bdyear;
-	Date gryear;
-	char inst[20];
-	char cafedra[20];
-	char group[20];
-	char zachetka[20];
-	char sex;
-	Semestr S[10];
-	int Snum;
-};
-
-class Check{
+class Check : public Person{
 private:
 	int flag;
 	FILE* file;
@@ -199,9 +201,8 @@ public:
 	}
 };
 class Input : public Check {
-private:
-	int vibor;
 public:
+	int vibor;
 	void predmet_null(Predmet* p) {
 		p->mark = 0;
 		memset(p->Name, '\0', 20);
@@ -385,7 +386,7 @@ public:
 		}
 	}
 };
-class Print {
+class Print : public Person {
 public:
 	void print_zapis(Student* student) {
 		printf("\n");
@@ -394,24 +395,25 @@ public:
 			size = 50;
 		}
 		cout << "|" << setfill('-') << setw(size) << "|" << endl;
-		cout << "| ФИО: " << (*student).F << " " << (*student).N << " " << (*student).O << " |" << " Пол: " << (*student).sex << setfill(' ') << setw(size - 17 - strlen((*student).F) - strlen((*student).N) - strlen((*student).O)) << "|" << endl;
+		cout << setfill(' ') << setw(size / 2 + 5) << "АНКЕТА СТУДЕНТА" << endl;
 		cout << "|" << setfill('-') << setw(size) << "|" << endl;
-		cout << "| Институт: " << (*student).inst << " |" << " Кафедра: " << (*student).cafedra << setfill(' ') << setw(size - (23 + strlen((*student).cafedra) + strlen((*student).inst))) << "|" << endl;
+		printf(" ФИО: %s %s %s | Пол: %c\n", (*student).F, (*student).N, (*student).O, (*student).sex);
 		cout << "|" << setfill('-') << setw(size) << "|" << endl;
-		cout << "| Группа: " << (*student).group << " |" << " Студак: " << (*student).zachetka << setfill(' ') << setw(size - (20 + strlen((*student).group) + strlen((*student).zachetka))) << "|" << endl;
+		printf(" Институт: %s | Кафедра: %s\n", (*student).inst, (*student).cafedra);
 		cout << "|" << setfill('-') << setw(size) << "|" << endl;
-		printf("| Д/Р: %02d.%02d.%d ", (*student).bdyear.d, (*student).bdyear.m, (*student).bdyear.y);
-		printf("| Г/П: %d", (*student).gryear.y);
-		cout << setfill(' ') << setw(size - 28) << "|" << endl;
+		printf(" Группа: %s | Студак: %s\n", (*student).group, (*student).zachetka);
+		cout << "|" << setfill('-') << setw(size) << "|" << endl;
+		printf(" Д/Р: %02d.%02d.%d | Г/П %d\n", (*student).bdyear.d, (*student).bdyear.m, (*student).bdyear.y, (*student).gryear.y);
 		cout << "|" << setfill('-') << setw(size) << "|" << endl;
 		for (int i = 0; i < (*student).Snum; ++i) {
-			cout << "|" << setfill(' ') << setw(size / 2 + 5) << "Семестр # " << (*student).S[i].count << setw(size / 2 - 5) << "|" << endl;
+			cout << setfill(' ') << setw(size / 2 + 5) << "Семестр # " << (*student).S[i].count << endl;
 			cout << "|" << setfill('-') << setw(size) << "|" << endl;
 			for (int j = 0; j < (*student).S[i].Pnum; ++j) {
-				cout << "| " << (*student).S[i].p[j].Name << " : " << (*student).S[i].p[j].mark << setfill(' ') << setw(size - 5 - strlen((*student).S[i].p[j].Name)) << "|" << endl;
+				printf(" %s : %d\n", (*student).S[i].p[j].Name, (*student).S[i].p[j].mark);
 				cout << "|" << setfill('-') << setw(size) << "|" << endl;
 			}
 		}
+		printf("\n");
 	}
 	void print_main_menu() {
 		cout << "|" << setfill('-') << setw(35) << "|" << endl;
@@ -446,9 +448,8 @@ private:
 	Student student;
 	FILE* file_izm;
 	FILE* file;
-	char file_name[20];
-	int vibor;
 public:
+	char file_name[20];
 	void create_new_file() {
 		printf("Введите название файла");
 		input(file_name, 20 - 1);
@@ -556,8 +557,7 @@ private:
 	FILE* file_izm;
 	char studak[20];
 	char s[20];
-	char file_name[20];
-	int vibor, size;
+	int size;
 public:
 	void add_zapis(FILE* file) {
 		fseek(file, 0, SEEK_END);
@@ -939,19 +939,15 @@ public:
 		printf(" Файл с подходящими студентами - Student_Pod.txt\n Файл с остальными студентами - Student_Ost.txt\n");
 	}
 };
-class menu : public File{
+class menu : public Anketa{
 private: 
-	Anketa ank;
 	FILE* file;
-	int vibor;
-	char file_name[20];
 public:
 	void main_menu() {
 	a1:
 		print_main_menu();
-		int c;
-		input(&c);
-		switch (c)
+		input(&vibor);
+		switch (vibor)
 		{
 		case 1:
 			create_new_file();
@@ -966,7 +962,7 @@ public:
 			print_file();
 			break;
 		case 5:
-			ank.solve_ex();
+			solve_ex();
 			break;
 		case 6:
 			return;
@@ -996,13 +992,13 @@ public:
 			print_file(file);
 			goto a2;
 		case 2:
-			ank.add_zapis(file);
+			add_zapis(file);
 			goto a2;
 		case 3:
-			ank.change_zapis(file);
+			change_zapis(file);
 			goto a2;
 		case 4:
-			ank.delete_zapis(file, file_name);
+			delete_zapis(file, file_name);
 			fopen_s(&file, file_name, "r+b");
 			goto a2;
 		case 5:
@@ -1016,7 +1012,7 @@ public:
 };
 
 int main() {
-	menu m;
 	setlocale(0, "");
+	menu m;
 	m.main_menu();
 }
