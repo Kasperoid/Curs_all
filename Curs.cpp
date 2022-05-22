@@ -31,7 +31,7 @@ const char* sub_menu2[] = {
 	"6 - Институт ",
 	"7 - Кафедра ",
 	"8 - Группа ",
-	"9 - Номер зачётки ",
+	"9 - Номер студенческого ",
 	"10 - Пол ",
 	"11 - Предметы ",
 	"12 - Вернуться в меню"
@@ -46,7 +46,7 @@ const char* polja_students[] = {
 	"Институт ",
 	"Кафедра ",
 	"Группа ",
-	"Номер зачетки ",
+	"Номер студенческого ",
 	"Пол (Мужчина - M, Женщина - W) ",
 	"Предмет "
 };
@@ -64,7 +64,7 @@ const char* Error[] = { "\nОшибка: дата рождения не соот
 					 "\nОшибка: ввод оценки\n",
 					 "\nОшибка: данный файл отсутствует в системе\n",
 					 "\nОшибка: данный файл пустой\n",
-					 "\nОшибка: такой номер зачетки уже вводился\n",
+					 "\nОшибка: такой номер студенческого уже вводился\n",
 					 "\nОшибка: кол-во семестров выходит за пределы\n",
 					 "\nОшибка: кол-во предметов выходит за пределы\n",
 					 "\nОшибка: некорректный формат ввода\n",
@@ -199,6 +199,21 @@ public:
 		}
 		return flag;
 	}
+	int Error_name_inst(char* name) {
+		regex regName("[A-Z]+");
+		flag = regex_match(name, regName);
+		return flag;
+	}
+	int Error_name_kaf(char* name) {
+		regex regName("[A-Z][A-Z][-][0-9]+");
+		flag = regex_match(name, regName);
+		return flag;
+	}
+	int Error_name_group(char* name) {
+		regex regName("[A-Z][A-Z][A-Z][A-Z][-][0-9][0-9][-][0-9][0-9]");
+		flag = regex_match(name, regName);
+		return flag;
+	}
 };
 class Input : public Check {
 public:
@@ -296,17 +311,24 @@ public:
 			printf("%s", Error[1]);
 			goto data2;
 		}
+		data5:
 		printf("Год: ");
 		input(&(*student).bdyear.y);
+		if ((*student).bdyear.y < 1000 || (*student).bdyear.y >= 10000) {
+			printf("%s", Error[10]);
+			goto data5;
+		}
 		if (Error_data_day((*student).bdyear.m, (*student).bdyear.d, (*student).bdyear.y) == 1) {
 			printf("%s", Error[2]);
 			goto data1;
 		}
-
-
 	data3:
 		printf("%s", polja_students[4]);
 		input(&(*student).gryear.y);
+		if ((*student).gryear.y < 1000 || (*student).gryear.y >= 10000) {
+			printf("%s", Error[10]);
+			goto data3;
+		}
 		if (((*student).gryear.y - (*student).bdyear.y) < 17) {
 			printf("%s", Error[0]);
 		data4:
@@ -319,18 +341,29 @@ public:
 			}
 		}
 
-
+		inst1:
 		printf("%s", polja_students[5]);
 		input((*student).inst, 20 - 1);
+		if (Error_name_inst((*student).inst) == 0) {
+			printf("%s", Error[10]);
+			goto inst1;
+		}
 
-
+		caf1:
 		printf("%s", polja_students[6]);
 		input((*student).cafedra, 20 - 1);
+		if (Error_name_kaf((*student).cafedra) == 0) {
+			printf("%s", Error[10]);
+			goto caf1;
+		}
 
-
+		gr1:
 		printf("%s", polja_students[7]);
 		input((*student).group, 20 - 1);
-
+		if (Error_name_group((*student).group) == 0) {
+			printf("%s", Error[10]);
+			goto gr1;
+		}
 
 	stud1:
 		printf("%s", polja_students[8]);
@@ -371,6 +404,10 @@ public:
 			sem3:
 				printf("%s ", polja_predmet[0]);
 				input((*student).S[i].p[j].Name, 20 - 1);
+				if (Error_name((*student).S[i].p[j].Name) == 0) {
+					printf("%s", Error[10]);
+					goto sem3;
+				}
 				if (Error_repeat_pred(&student->S[i], j) == 1) {
 					printf("%s", Error[3]);
 					goto sem3;
@@ -657,10 +694,13 @@ public:
 					printf("%s", Error[1]);
 					goto data2;
 				}
-
+			data5:
 				printf("Год: ");
 				input(&student.bdyear.y);
-
+				if (student.bdyear.y < 1000 || student.bdyear.y >= 10000) {
+					printf("%s", Error[10]);
+					goto data5;
+				}
 				if (Error_data_day(student.bdyear.m, student.bdyear.d, student.bdyear.y) == 1) {
 					printf("%s", Error[2]);
 					goto data1;
@@ -670,24 +710,43 @@ public:
 			a:
 				printf("Введите новое значение: ");
 				input(&student.gryear.y);
+				if (student.gryear.y < 1000 || student.gryear.y >= 10000) {
+					printf("%s", Error[10]);
+					goto a;
+				}
 				if ((student.gryear.y - student.bdyear.y) < 17) {
 					printf("%s", Error[0]);
 					goto a;
 				}
 				break;
 			case 6:
+				inst1:
 				printf("Введите новое значение: ");
-				input(s, 20);
+				input(s, 20 - 1);
+				if (Error_name_inst(s) == 0) {
+					printf("%s", Error[10]);
+					goto inst1;
+				}
 				strcpy_s(student.inst, sizeof(student.inst), s);
 				break;
 			case 7:
+				caf1:
 				printf("Введите новое значение: ");
-				input(s, 20);
+				input(s, 20 - 1);
+				if (Error_name_kaf(s) == 0) {
+					printf("%s", Error[10]);
+					goto caf1;
+				}
 				strcpy_s(student.cafedra, sizeof(student.cafedra), s);
 				break;
 			case 8:
+				gr1:
 				printf("Введите новое значение: ");
-				input(s, 20);
+				input(s, 20 - 1);
+				if (Error_name_group(s) == 0) {
+					printf("%s", Error[10]);
+					goto gr1;
+				}
 				strcpy_s(student.group, sizeof(student.group), s);
 				break;
 			case 9:
@@ -703,7 +762,6 @@ public:
 			case 10:
 			sex1:
 				printf("Введите новое значение: ");
-				printf("%s", polja_students[9]);
 				input(&student.sex);
 				if (Error_sex(student.sex) == 1) {
 					printf("%s", Error[11]);
@@ -720,7 +778,6 @@ public:
 				}
 				for (int i = 0; i < student.Snum; ++i) {
 					student.S[i].count = i + 1;
-					// Предметы 
 					printf("Ввод %d семестра\n", i + 1);
 				sem2:
 					printf("%s: ", polja_semestr[0]);
@@ -733,6 +790,10 @@ public:
 					sem3:
 						printf("%s ", polja_predmet[0]);
 						input(student.S[i].p[j].Name, 20 - 1);
+						if (Error_name(student.S[i].p[j].Name) == 0) {
+							printf("%s", Error[10]);
+							goto sem3;
+						}
 						if (Error_repeat_pred(student.S[i], j) == 1) {
 							printf("%s", Error[3]);
 							goto sem3;
